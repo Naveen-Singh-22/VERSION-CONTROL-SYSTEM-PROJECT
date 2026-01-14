@@ -16,9 +16,12 @@ yargs(hideBin(process.argv))
         (yargs) => {
         yargs.positional("file",{
             describe: "File to add to the staging area",
-            type:"string" 
+            type:"string",
             });
-        },addRepo
+        },
+        (argv) => {
+            addRepo(argv.file);
+        }
     )
     .command(
         "commit <message>",
@@ -26,9 +29,12 @@ yargs(hideBin(process.argv))
         (yargs) => {
             yargs.positional("message", {
             describe : "Commit message",
-            type: "string"
+            type: "string",
             });
-        },commitRepo
+        },
+        (argv) => {
+            commitRepo(argv.message);
+        }
     )
     .command("push","Push the committed changes to remote repository(to S3)",{},pushRepo)
     .command("pull","Pull the committed changes from remote repository(from S3)",{},pullRepo)
