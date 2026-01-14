@@ -4,13 +4,13 @@ const { v4: uuidv4 } = require("uuid"); //for generating unique commit IDs
 
 async function commitRepo(message){
     const repoPath = path.resolve(process.cwd(), ".myGit");
-    const stagingPath = path.join (repoPath, "staging");
+    const stagedPath = path.join (repoPath, "staging");
     const commitsPath = path.join (repoPath, "commits");
 
     try {
         const commitId = uuidv4();
         const commitDir = path.join (commitsPath, commitId);
-        await fs,mkdir(commitDir , { recursive: true });
+        await fs.mkdir(commitDir , { recursive: true });
 
         // Move files from staging to commit directory
         const files = await fs.readdir(stagedPath);
@@ -20,6 +20,13 @@ async function commitRepo(message){
                 path.join(commitDir, file)
             );
         }
+
+        await fs.writeFile(path.join(commitDir,"commit.json"),JSON.stringify({message, date:new Date().toISOString()})
+        
+     );
+    
+
+    console.log(`Committed  ${commitId} created with message: "${message}" `);
     } catch (error) {
         console.error("Error committing changes:", error);
 
