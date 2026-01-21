@@ -18,8 +18,6 @@ async function  pullRepo(){
 
         const objects = data.Contents;
 
-
-
         for(const object of objects){
             const key = object.Key;
             const commitDir = path.join(
@@ -41,9 +39,8 @@ async function  pullRepo(){
         await fs.mkdir(path.dirname(localPath), { recursive: true });
         await fs.writeFile(localPath, fileContent.Body);
 
-
-        console.log("All commits pulled from S3 successfully.");
         } 
+         console.log("All commits pulled from S3 successfully.");
     } catch (error) {
         console.error("Error pulling repository from s3:", error);
     }
