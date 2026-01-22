@@ -1,3 +1,11 @@
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors"); //to allow cross origin requests
+const mongoose = require("mongoose");
+const bodyParser =require("body-parser");
+const http = require("http");
+
+
 const yargs = require('yargs');
 const {hideBin} = require("yargs/helpers"); //helps in to read arguement attached with command
 
@@ -7,6 +15,8 @@ const { commitRepo } = require("./controllers/commit");
 const { pushRepo } = require("./controllers/push");
 const { pullRepo } = require("./controllers/pull");
 const { revertRepo } = require("./controllers/revert");
+
+dotenv.config(); // Load environment variables from .env file
 
 yargs(hideBin(process.argv))
     .command(
@@ -66,5 +76,16 @@ yargs(hideBin(process.argv))
 // hideBin helps to ignore first two default arguments provided by node
 // process.argv is an array that contains command line arguments passed when the Node.js process was launched.
 function startServer() {
-    console.log("Server logic called!");
+    const app = express();
+    const port = process.env.PORT || 3000;
+
+    app.use(bodyParser.json());
+    app.use(express.json());
+
+    const mongoURI = process.env.MONGODB_URI;
+
+    mongoose
+        .connect(mongoURI)
+        .then(() => console.log("Connected to MongoDB"))
+        .catch((err) => console.error("Error connecting to MongoDB:", err));
 }
