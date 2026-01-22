@@ -9,7 +9,15 @@ const { pullRepo } = require("./controllers/pull");
 const { revertRepo } = require("./controllers/revert");
 
 yargs(hideBin(process.argv))
-.command("Start ","Start a new Server: ",{},initRepo)
+    .command(
+         "start",
+         "Start a new Server",
+         {},
+         () => {
+         startServer();
+        }
+    )
+
     .command("init","Initialise a new repository",{},initRepo)
     .command(
         "add <file>",
@@ -57,3 +65,6 @@ yargs(hideBin(process.argv))
 
 // hideBin helps to ignore first two default arguments provided by node
 // process.argv is an array that contains command line arguments passed when the Node.js process was launched.
+function startServer() {
+    console.log("Server logic called!");
+}
