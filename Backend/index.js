@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const bodyParser =require("body-parser");
 const http = require("http");
 const { Server } = require("socket.io");
+const mainRouter = require("./routes/main.router");
 
 
 const yargs = require('yargs');
@@ -95,6 +96,8 @@ function startServer() {
     app.get("/", (req, res) => {
         res.send("Welcome!");
     });
+
+    app.use("/", mainRouter);
 
     let user = "test";
     const  httpServer = http.createServer(app);
