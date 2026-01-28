@@ -120,10 +120,13 @@ async function updateUserProfile (req, res) {
     const currentID = req.params.id;
     const { email, password } = req.body;
 
-    try{
+    try {
+        await connectClient();
+        const db = client.db("GitHubClone");
+        const usersCollection = db.collection("users");
 
-        let updateFields = {email};
-        if(password) {
+        let updateFields = { email };
+        if (password) {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
             updateFields.password = hashedPassword;
@@ -133,20 +136,34 @@ async function updateUserProfile (req, res) {
             { _id: new ObjectId(currentID) },
             { $set: updateFields },
             { returnDocument: "after" }
-        ); 
+        );
         if (!result.value) {
             return res.status(404).json({ message: "User not found" });
         }
-        res.json(result.value);
-    }catch(error) {
+        res.json({ message: "Profile updated successfully", user: result.value });
+    } catch(error) {
         console.error("Error during updating user profile:", error.message);
         res.status(500).json("Server error!");
     }
+}
 
-};
 async function deleteUserProfile (req, res) {
-    res.send("Delete user profile");
-};
+    const currentID = req.params.id;
+    try {
+        await connectClient();
+        const db = client.db("GitHubClone");
+        const usersCollection = db.collection("users");
+
+        const result = await usersCollection.deleteOne({ _id: new ObjectId(currentID) });
+        if(result.deletedCount === 0) {
+            return res.status(404).json({ message: "User not found" });
+        } 
+        res.json({ message: "User deleted successfully" });  
+    } catch (error) {
+        console.error("Error during deleting user profile:", error.message);
+        res.status(500).json("Server error!");
+    }   
+}
 
 module.exports = {
     getALLUsers,
@@ -155,4 +172,4 @@ module.exports = {
     getUserProfile,
     updateUserProfile,
     deleteUserProfile
-}; 
+};
