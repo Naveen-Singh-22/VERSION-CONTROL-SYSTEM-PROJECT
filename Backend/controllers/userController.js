@@ -117,7 +117,32 @@ async function getUserProfile (req, res) {
     }
 };
 async function updateUserProfile (req, res) {
-    res.send("Update user profile");
+    const currentID = req.params.id;
+    const { email, password } = req.body;
+
+    try{
+
+        let updateFields = {email};
+        if(password) {
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+            updateFields.password = hashedPassword;
+        }
+
+        const result = await usersCollection.findOneAndUpdate(
+            { _id: new ObjectId(currentID) },
+            { $set: updateFields },
+            { returnDocument: "after" }
+        ); 
+        if (!result.value) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(result.value);
+    }catch(error) {
+        console.error("Error during updating user profile:", error.message);
+        res.status(500).json("Server error!");
+    }
+
 };
 async function deleteUserProfile (req, res) {
     res.send("Delete user profile");
