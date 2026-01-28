@@ -121,7 +121,7 @@ async function updateUserProfile (req, res) {
     const { email, password } = req.body;
 
     try {
-        await connectClient();
+        await connectClient();;
         const db = client.db("GitHubClone");
         const usersCollection = db.collection("users");
 
@@ -144,6 +144,7 @@ async function updateUserProfile (req, res) {
     } catch(error) {
         console.error("Error during updating user profile:", error.message);
         res.status(500).json("Server error!");
+    
     }
 }
 
