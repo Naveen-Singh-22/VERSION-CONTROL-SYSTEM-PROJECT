@@ -77,11 +77,26 @@ async function fetchRepositoryByName(req, res) {
 };
 
 async function fetchRepositoryForCurrentUser (req, res) {
-    res.send("Repository fetched for current Logged in user");
+      
+    const   { userID }   = req.params;
+     try{
+       const repositories = await Repository.find({ owner: userID }).populate("owner").populate("issues");
+
+       if(!repositories || repositories.length === 0){
+        return res.status(404).json({message: "No repositories found for the user!"});
+       }
+       res.json({message: "Repositories found!", repositories: repositories});
+    } catch(error) {
+
+        console.error("Error during fetching User repositories:", error.message);
+        res.status(500).json("Server error!");
+    }
+
 };
 
 async function updateRepositoryById (req, res) {
-    res.send("Repository Updated!!");
+    const { id } = req.params;
+    const { content, description } = req.body;
 };
 
 async function toggleVisibilityById (req, res) {
