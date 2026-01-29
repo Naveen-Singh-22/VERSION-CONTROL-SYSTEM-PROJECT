@@ -114,11 +114,40 @@ async function updateRepositoryById (req, res) {
 };
 
 async function toggleVisibilityById (req, res) {
-    res.send("Visibility Toggled!!");
+    
+    const { id } = req.params;
+    
+    try {
+        const repository = await Repository.findById(id);
+        if(!repository){
+            return res.status(404).json({ error: "Repository not found!" });
+        }
+        repository.visibility = !repository.visibility;
+        const updatedRepository = await repository.save();
+        
+        res.json({ message: "Repository visibility toggled successfully!", repository: updatedRepository });
+    } catch (error) {
+        console.error("Error during repository visibility toggle:", error.message);
+        res.status(500).json("Server error!");
+    }
 };
 
+
 async function deleteRepositoryById (req, res) {
-    res.send("Repository deleted!!");
+    const { id } = req.params;
+    
+    try {
+        const repository = await Repository.findByIdAndDelete(id);
+
+        if(!repository){
+            return res.status(404).json({ error: "Repository not found!" });
+        }
+        res.json({ message: "Repository deleted successfully!" });
+
+    }catch (error) {
+        console.error("Error during repository deleting:", error.message);
+        res.status(500).json("Server error!");
+    }
 };
 
 module.exports =  {
