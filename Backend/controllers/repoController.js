@@ -35,15 +35,45 @@ async function createRepository (req, res) {
 };
 
 async function getAllRepositories (req, res) {
-    res.send("All Repositories feteched");
+    try{
+        const repositories = await Repository.find({}).populate("owner").populate("issues");
+
+        res.json(repositories);
+
+    } catch(error) {
+
+        console.error("Error during fetching repositories:", error.message);
+        res.status(500).json("Server error!");
+    }
 };
 
 async function fetchRepositoryById (req, res) {
-    res.send("Repository Details fetched by ID");
+    const  repoID  = req.params.id;
+     try{
+        const repository = await Repository.find({ _id: repoID }).populate("owner").populate("issues");
+
+        res.json(repository);
+        
+        
+    } catch(error) {
+
+        console.error("Error during fetching repository:", error.message);
+        res.status(500).json("Server error!");
+    }
 };
 
 async function fetchRepositoryByName(req, res) {
-    res.send("Repository Details fetched by Name");
+    const   { name }  = req.params;
+     try{
+        const repository = await Repository.find({ name}).populate("owner").populate("issues");
+
+        res.json(repository);
+        
+    } catch(error) {
+
+        console.error("Error during fetching repositoy:", error.message);
+        res.status(500).json("Server error!");
+    }
 };
 
 async function fetchRepositoryForCurrentUser (req, res) {
